@@ -1,121 +1,158 @@
 "use client";
-import { useContext, useState } from "react";
-import { UserCtx } from "../providers";
-import { auth } from "@/lib/firebase";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
-import { useForm, Controller } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-// For more styling
-import FileFieldMUI from "@/components/fileField";
-import { Box, Button, Stack, Container } from "@mui/material";
-import Dropzone from "react-dropzone";
-
-const schema = z.object({
-  excel: z.instanceof(File, { message: "Excel file is required" }),
-  pdfs: z
-    .array(z.instanceof(File))
-    .min(1, "Upload at least one PDF")
-    .max(8, "Max 8 PDFs"),
-});
+import { useState } from "react";
+import { Box, Button, Stack, Container, Tabs, Tab, Alert, Typography, CircularProgress } from "@mui/material";
+import FileField from "@/components/fileField";
 
 export default function Home() {
-  const user = useContext(UserCtx);
-  const [sending, setSending] = useState(false);
-
-  async function onSubmit(data) {
-    setSending(true);
-    const form = new FormData();
-    form.append("excel", data.excel);
-    data.pdfs.forEach((f, i) => form.append(`pdf_${i}`, f));
-
-    const res = await fetch("/api/upload", { method: "POST", body: form });
-    setSending(false);
-    if (!res.ok) alert("Upload failed");
-  }
-
-  // if (!user?.uid) {
-  //   return (
-  //     <main className="h-screen flex items-center justify-center">
-  //       <button
-  //         className="px-6 py-3 rounded-lg bg-black text-white"
-  //         onClick={() => signInWithPopup(auth, new GoogleAuthProvider())}
-  //       >
-  //         Sign in with Google
-  //       </button>
-  //     </main>
-  //   );
-  // }
   const [files, setFiles] = useState({
     excel: null,
     es: null,
     ss: null,
-    webReports: [],
+    "webReports ES": null,
+    "webReports DH": null,
+    "webReports NUS": null,
+    "webReports DEB": null,
+    "students-now": null,
+    "students-last-week": null,
   });
+  const [tabValue, setTabValue] = useState(0);
+  const [response, setResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const fields = [
-    {
-      key: "excel",
-      label: "So sánh tuần (Excel)",
-      accept: {
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-          ".xlsx",
-        ],
-      },
-      multiple: false,
-    }
-    // ,{
-    //   key: "es",
-    //   label: "Khách ES (PDF)",
-    //   accept: { "application/pdf": [".pdf"] },
-    //   multiple: false,
-    // },
-    // {
-    //   key: "ss",
-    //   label: "Khách SS (PDF)",
-    //   accept: { "application/pdf": [".pdf"] },
-    //   multiple: false,
-    // },
-    // {
-    //   key: "webReports",
-    //   label: "Website reports (4× PDF)",
-    //   accept: { "application/pdf": [".pdf"] },
-    //   multiple: true,
-    // },
+    { key: "excel", label: "So sánh tuần (Excel)", accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] }, multiple: false },
+    { key: "es", label: "Khách ES (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "ss", label: "Khách SS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "webReports ES", label: "Website reports Anh ngữ", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "webReports DH", label: "Website reports Du học", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "webReports NUS", label: "Website reports NUS", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "webReports DEB", label: "Website reports DEB", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "students-now", label: "Học viên tuần này", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "students-last-week", label: "Học viên tuần trước", accept: { "application/pdf": [".pdf"] }, multiple: false },
   ];
 
-  function set(key) {
+  const NEXT_PUBLIC_N8N_WEBHOOK = "https://it-vncp-1.app.n8n.cloud/webhook-test/generate-crm-report";
+
+  function setFile(key) {
     return (val) => setFiles((prev) => ({ ...prev, [key]: val }));
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setResponse(null);
+
     const form = new FormData();
-    form.append("excel", files.excel);
-    ["es", "ss"].forEach((k) => form.append(k, files[k]));
-    files.webReports.forEach((f, i) => form.append(`web_${i}`, f));
-    await fetch("/api/upload", { method: "POST", body: form });
+    if (files.excel) form.append("excel", files.excel);
+    if (files.es) form.append("es", files.es);
+    if (files.ss) form.append("ss", files.ss);
+    if (files["students-now"]) form.append("students-now", files["students-now"]);
+    if (files["students-last-week"]) form.append("students-last-week", files["students-last-week"]);
+    if (files["webReports ES"]) form.append("web_0", files["webReports ES"]);
+    if (files["webReports DH"]) form.append("web_1", files["webReports DH"]);
+    if (files["webReports NUS"]) form.append("web_2", files["webReports NUS"]);
+    if (files["webReports DEB"]) form.append("web_3", files["webReports DEB"]);
+    // form.append("returnUrl", `${window.location.origin}/api/callback`);
+
+    try {
+      const res = await fetch(NEXT_PUBLIC_N8N_WEBHOOK, {
+        method: "POST",
+        body: form,
+      });
+
+      if (res.status === 200) {
+        const contentType = res.headers.get("content-type");
+        if (contentType.includes("application/json")) {
+          const data = await res.json();
+          setResponse({ status: 200, data });
+        } else if (contentType.includes("application/vnd.openxmlformats")) {
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+          setResponse({ status: 200, data: { fileUrl: url, fileName: "report.docx" } });
+        }
+        setTabValue(1);
+      } else {
+        setError(`Upload failed with status ${res.status}. Please try again or check the server.`);
+      }
+    } catch (err) {
+      setError("Failed to connect to the server. Check your network or webhook URL.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+    return (
+      <div role="tabpanel" hidden={value !== index} id={`tabpanel-${index}`} aria-labelledby={`tab-${index}`} {...other}>
+        {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      </div>
+    );
   }
 
   return (
     <Container maxWidth="md" sx={{ py: 6 }}>
-      <Box component="form" onSubmit={handleSubmit}>
-        <Stack spacing={4}>
-          {fields.map((f) => (
-            <FileFieldMUI
-              key={f.key}
-              label={f.label}
-              accept={f.accept}
-              multiple={f.multiple}
-              value={files[f.key]}
-              onChange={set(f.key)}
-            />
-          ))}
-          <Button type="submit" variant="contained" size="large">
-            Upload all
-          </Button>
-        </Stack>
+      <Box>
+        <Tabs value={tabValue} onChange={(e, newValue) => setTabValue(newValue)} aria-label="upload and response tabs">
+          <Tab label="Upload Files" id="tab-0" aria-controls="tabpanel-0" />
+          <Tab label="Response" id="tab-1" aria-controls="tabpanel-1" />
+        </Tabs>
+
+        <TabPanel value={tabValue} index={0}>
+          <Box component="form" onSubmit={handleSubmit}>
+            <Stack spacing={4}>
+              {fields.map((f) => (
+                <FileField
+                  key={f.key}
+                  label={f.label}
+                  accept={f.accept}
+                  multiple={f.multiple}
+                  value={files[f.key]}
+                  onChange={setFile(f.key)}
+                />
+              ))}
+              <Button type="submit" variant="contained" size="large" disabled={loading}>
+                {loading ? <CircularProgress size={24} /> : "Upload all"}
+              </Button>
+            </Stack>
+          </Box>
+        </TabPanel>
+
+        <TabPanel value={tabValue} index={1}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          {response && response.status === 200 && (
+            <Stack spacing={2}>
+              <Alert severity="success">Upload successful! Workflow triggered.</Alert>
+              {response.data?.fileUrl && (
+                <Button
+                  variant="contained"
+                  href={response.data.fileUrl}
+                  download={response.data.fileName}
+                  sx={{ mt: 2 }}
+                >
+                  Download Report
+                </Button>
+              )}
+              {response.data && !response.data.fileUrl && (
+                <Box>
+                  <Typography variant="h6">Response Data:</Typography>
+                  <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 4, overflowX: "auto" }}>
+                    {JSON.stringify(response.data, null, 2)}
+                  </pre>
+                </Box>
+              )}
+            </Stack>
+          )}
+          {!response && !error && (
+            <Typography>No response yet. Submit files to see the response here.</Typography>
+          )}
+        </TabPanel>
       </Box>
     </Container>
   );
