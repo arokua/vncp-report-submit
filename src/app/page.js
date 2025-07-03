@@ -32,7 +32,7 @@ export default function Home() {
     { key: "students-last-week", label: "Học viên tuần trước", accept: { "application/pdf": [".pdf"] }, multiple: false },
   ];
 
-  const NEXT_PUBLIC_N8N_WEBHOOK = "https://it-vncp-1.app.n8n.cloud/webhook-test/generate-crm-report";
+  const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook-test/generate-crm-report";
 
   function setFile(key) {
     return (val) => setFiles((prev) => ({ ...prev, [key]: val }));
