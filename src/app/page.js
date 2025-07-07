@@ -22,8 +22,8 @@ export default function Home() {
 
   const fields = [
     { key: "excel", label: "So sánh tuần (Excel)", accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] }, multiple: false },
-    { key: "es", label: "Khách ES (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
-    { key: "ss", label: "Khách SS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    // { key: "es", label: "Khách ES (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    // { key: "ss", label: "Khách SS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports ES", label: "Website reports Anh ngữ", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports DH", label: "Website reports Du học", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports NUS", label: "Website reports NUS", accept: { "application/pdf": [".pdf"] }, multiple: false },
