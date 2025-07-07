@@ -46,8 +46,6 @@ export default function Home() {
 
     const form = new FormData();
     if (files.excel) form.append("excel", files.excel);
-    if (files.es) form.append("es", files.es);
-    if (files.ss) form.append("ss", files.ss);
     if (files["students-now"]) form.append("students-now", files["students-now"]);
     if (files["students-last-week"]) form.append("students-last-week", files["students-last-week"]);
     if (files["webReports ES"]) form.append("web_0", files["webReports ES"]);
