@@ -64,7 +64,12 @@ export default function Home() {
 
       if (res.status === 200) {
         const contentType = res.headers.get("content-type");
-        if (contentType.includes("application/json")) {
+        if (contentType.includes("text/plain")) {
+          // for n8n plain text responses
+          const text = await res.text();
+          setResponse({ status: 200, text });
+        }
+        else if (contentType.includes("application/json")) {
           const data = await res.json();
           setResponse({ status: 200, data });
         } else if (contentType.includes("application/vnd.openxmlformats")) {
@@ -139,18 +144,51 @@ export default function Home() {
                   Download Report
                 </Button>
               )}
-              {response.data && !response.data.fileUrl && (
-                <Box>
-                  <Typography variant="h6">Response Data:</Typography>
-                  <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 4, overflowX: "auto" }}>
-                    {JSON.stringify(response.data, null, 2)}
-                  </pre>
+              {loading && <CircularProgress />}
+              {response.text && (
+                <Box
+                  sx={{
+                    whiteSpace: "pre-wrap",
+                    background: "#f5f5f5",
+                    p: 2,
+                    borderRadius: 1,
+                  }}
+                >
+                  <Typography component="div">{response.text}</Typography>
                 </Box>
+              )}
+              {response.data && !response.data.fileUrl && (
+                // <Box>
+                //   <Typography variant="h6">Response Data:</Typography>
+                //   <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 4, overflowX: "auto" }}>
+                //     {JSON.stringify(response.data, null, 2)}
+                //   </pre>
+                // </Box>
+                
+                 <Button
+                  variant="contained"
+                  href={response.data.fileUrl}
+                  download={response.data.fileName}
+                  sx={{ mt: 2 }}
+                  onClick={() => {
+                    const blob = new Blob([response.text], { type: 'text/plain' });
+                    const url  = URL.createObjectURL(blob);
+                    const a    = document.createElement('a');
+                    a.href     = url;
+                    a.download = `report-week-${week}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Tải xuống báo cáo bằng TXT
+                </Button>
               )}
             </Stack>
           )}
           {!response && !error && (
-            <Typography>No response yet. Submit files to see the response here.</Typography>
+            <Typography>Không có dữ liệu hiển thị.</Typography>
           )}
         </TabPanel>
       </Box>
