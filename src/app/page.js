@@ -36,7 +36,7 @@ export default function Home() {
                                                                     }, multiple: false },
   ];
 
-  const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook/generate-crm-report";
+  const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook-test/generate-crm-report";
 
   function setFile(key) {
     return (val) => setFiles((prev) => ({ ...prev, [key]: val }));
