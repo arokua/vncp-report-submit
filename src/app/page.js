@@ -29,7 +29,11 @@ export default function Home() {
     { key: "webReports NUS", label: "Website reports NUS", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports DEB", label: "Website reports DEB", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "students-now", label: "Học viên tuần này", accept: { "application/pdf": [".pdf"] }, multiple: false },
-    { key: "students-last-week", label: "Học viên tuần trước", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "students-last-week", label: " bảng số so sánh", accept: {
+                                                                      'application/pdf': ['.pdf'],
+                                                                      'image/png': ['.png'],
+                                                                      'image/jpeg': ['.jpg', '.jpeg']
+                                                                    }, multiple: false },
   ];
 
   const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook/generate-crm-report";
