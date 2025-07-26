@@ -162,7 +162,7 @@ export default function Home() {
                   <Typography component="div">{response.text}</Typography>
                 </Box>
               )}
-              <p> "Null" </p>
+              <p> Null </p>
             </Stack>
           )}
           {!response && !error && (
