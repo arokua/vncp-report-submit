@@ -162,34 +162,7 @@ export default function Home() {
                   <Typography component="div">{response.text}</Typography>
                 </Box>
               )}
-              //{response.data && !response.data.fileUrl && (
-                // <Box>
-                //   <Typography variant="h6">Response Data:</Typography>
-                //   <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 4, overflowX: "auto" }}>
-                //     {JSON.stringify(response.data, null, 2)}
-                //   </pre>
-                // </Box>
-                
-                //  <Button
-                //   variant="contained"
-                //   href={response.data.fileUrl}
-                //   download={response.data.fileName}
-                //   sx={{ mt: 2 }}
-                //   onClick={() => {
-                //     const blob = new Blob([response.text], { type: 'text/plain' });
-                //     const url  = URL.createObjectURL(blob);
-                //     const a    = document.createElement('a');
-                //     a.href     = url;
-                //     a.download = `report-week-${week}.txt`;
-                //     document.body.appendChild(a);
-                //     a.click();
-                //     a.remove();
-                //     URL.revokeObjectURL(url);
-                //   }}
-                // >
-                //   Tải xuống báo cáo bằng TXT
-                // </Button>
-              //)}
+              <p> "Null" </p>
             </Stack>
           )}
           {!response && !error && (
