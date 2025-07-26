@@ -32,7 +32,7 @@ export default function Home() {
     { key: "students-last-week", label: "Học viên tuần trước", accept: { "application/pdf": [".pdf"] }, multiple: false },
   ];
 
-  const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook-test/generate-crm-report";
+  const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook/generate-crm-report";
 
   function setFile(key) {
     return (val) => setFiles((prev) => ({ ...prev, [key]: val }));
@@ -163,25 +163,25 @@ export default function Home() {
                 //   </pre>
                 // </Box>
                 
-                 <Button
-                  variant="contained"
-                  href={response.data.fileUrl}
-                  download={response.data.fileName}
-                  sx={{ mt: 2 }}
-                  onClick={() => {
-                    const blob = new Blob([response.text], { type: 'text/plain' });
-                    const url  = URL.createObjectURL(blob);
-                    const a    = document.createElement('a');
-                    a.href     = url;
-                    a.download = `report-week-${week}.txt`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                    URL.revokeObjectURL(url);
-                  }}
-                >
-                  Tải xuống báo cáo bằng TXT
-                </Button>
+                //  <Button
+                //   variant="contained"
+                //   href={response.data.fileUrl}
+                //   download={response.data.fileName}
+                //   sx={{ mt: 2 }}
+                //   onClick={() => {
+                //     const blob = new Blob([response.text], { type: 'text/plain' });
+                //     const url  = URL.createObjectURL(blob);
+                //     const a    = document.createElement('a');
+                //     a.href     = url;
+                //     a.download = `report-week-${week}.txt`;
+                //     document.body.appendChild(a);
+                //     a.click();
+                //     a.remove();
+                //     URL.revokeObjectURL(url);
+                //   }}
+                // >
+                //   Tải xuống báo cáo bằng TXT
+                // </Button>
               )}
             </Stack>
           )}
