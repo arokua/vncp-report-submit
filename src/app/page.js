@@ -136,6 +136,9 @@ export default function Home() {
           {response && response.status === 200 && (
             <Stack spacing={2}>
               <Alert severity="success">Upload successful! Workflow triggered.</Alert>
+              <Typography> 
+                  Please wait for email from n8n.
+              </Typography>
               {response.data?.fileUrl && (
                 <Button
                   variant="contained"
@@ -159,7 +162,7 @@ export default function Home() {
                   <Typography component="div">{response.text}</Typography>
                 </Box>
               )}
-              {response.data && !response.data.fileUrl && (
+              //{response.data && !response.data.fileUrl && (
                 // <Box>
                 //   <Typography variant="h6">Response Data:</Typography>
                 //   <pre style={{ background: "#f5f5f5", padding: 16, borderRadius: 4, overflowX: "auto" }}>
@@ -186,7 +189,7 @@ export default function Home() {
                 // >
                 //   Tải xuống báo cáo bằng TXT
                 // </Button>
-              )}
+              //)}
             </Stack>
           )}
           {!response && !error && (
