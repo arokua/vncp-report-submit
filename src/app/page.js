@@ -22,8 +22,10 @@ export default function Home() {
 
   const fields = [
     { key: "excel", label: "So sánh tuần (Excel)", accept: { "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"] }, multiple: false },
-    // { key: "es", label: "Khách ES (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
-    // { key: "ss", label: "Khách SS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "es", label: "Khách ES (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "ss", label: "Khách SS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false },
+    { key: "deb_cus", label: "Khách DEB (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false }
+    { key: "nus_cus", label: "Khách NUS (PDF)", accept: { "application/pdf": [".pdf"] }, multiple: false }
     { key: "webReports ES", label: "Website reports Anh ngữ", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports DH", label: "Website reports Du học", accept: { "application/pdf": [".pdf"] }, multiple: false },
     { key: "webReports NUS", label: "Website reports NUS", accept: { "application/pdf": [".pdf"] }, multiple: false },
@@ -33,7 +35,7 @@ export default function Home() {
                                                                       'application/pdf': ['.pdf'],
                                                                       'image/png': ['.png'],
                                                                       'image/jpeg': ['.jpg', '.jpeg']
-                                                                    }, multiple: false },
+                                                                    }, multiple: true },
   ];
 
   const NEXT_PUBLIC_N8N_WEBHOOK = "https://destined-deeply-reptile.ngrok-free.app/webhook-test/generate-crm-report";
